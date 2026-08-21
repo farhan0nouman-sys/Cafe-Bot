@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+
+# Environment — keep .env.example tracked
+.env
+.env.*
+!.env.example
+
+# OS files
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
