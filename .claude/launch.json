@@ -2,16 +2,12 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "frontend",
-      "runtimeExecutable": "python",
+      "name": "backend",
+      "runtimeExecutable": "npm",
       "runtimeArgs": [
-        "-m",
-        "http.server",
-        "5173",
-        "--directory",
-        "frontend"
+        "start"
       ],
-      "port": 5173
+      "port": 3000
     }
   ]
 }

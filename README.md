@@ -11,7 +11,8 @@ CafeBot/
 │   ├── styles.css
 │   └── app.js
 ├── backend/        # server-side code
-├── data/           # menu, orders, and other data files
+├── data/           # menu, hours, promotions, orders (orders.json is dev-only
+│                   # scratch storage — revisit before production)
 ├── prompts/        # prompt templates for the bot
 └── README.md
 ```

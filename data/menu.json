@@ -1,0 +1,174 @@
+{
+  "currency": "USD",
+  "note": "Prices include tax. Oat, almond and soy milk are free of charge.",
+  "items": [
+    {
+      "id": "flat-white",
+      "name": "Flat White",
+      "category": "Coffee",
+      "description": "Double shot of the house blend under steamed milk, poured thin so the coffee still leads.",
+      "price": 4.25,
+      "sizes": [
+        { "name": "Regular", "price": 4.25 },
+        { "name": "Large", "price": 4.95 }
+      ],
+      "options": [
+        { "name": "Milk", "choices": ["Whole", "Oat", "Almond", "Soy"], "required": true }
+      ],
+      "allergens": ["milk"],
+      "available": true
+    },
+    {
+      "id": "espresso",
+      "name": "Espresso",
+      "category": "Coffee",
+      "description": "Two ounces of house blend - cocoa, toasted walnut, clean finish.",
+      "price": 3.00,
+      "sizes": [
+        { "name": "Double", "price": 3.00 }
+      ],
+      "options": [],
+      "allergens": [],
+      "available": true
+    },
+    {
+      "id": "cold-brew",
+      "name": "Cold Brew",
+      "category": "Coffee",
+      "description": "Steeped eighteen hours, served over ice. Smooth, low acid, quietly strong.",
+      "price": 4.75,
+      "sizes": [
+        { "name": "Regular", "price": 4.75 },
+        { "name": "Large", "price": 5.50 }
+      ],
+      "options": [
+        { "name": "Milk", "choices": ["None", "Whole", "Oat", "Almond", "Soy"], "required": true }
+      ],
+      "allergens": [],
+      "available": true
+    },
+    {
+      "id": "mocha",
+      "name": "Mocha",
+      "category": "Coffee",
+      "description": "Dark chocolate ganache stirred through espresso and milk. Not too sweet.",
+      "price": 5.00,
+      "sizes": [
+        { "name": "Regular", "price": 5.00 },
+        { "name": "Large", "price": 5.75 }
+      ],
+      "options": [
+        { "name": "Temperature", "choices": ["Hot", "Iced"], "required": true },
+        { "name": "Milk", "choices": ["Whole", "Oat", "Almond", "Soy"], "required": true }
+      ],
+      "allergens": ["milk", "soy"],
+      "available": true
+    },
+    {
+      "id": "masala-chai",
+      "name": "Masala Chai",
+      "category": "Tea & Cold Drinks",
+      "description": "Loose black tea simmered with cardamom, ginger and clove, then cut with milk.",
+      "price": 4.50,
+      "sizes": [
+        { "name": "Regular", "price": 4.50 },
+        { "name": "Large", "price": 5.20 }
+      ],
+      "options": [
+        { "name": "Temperature", "choices": ["Hot", "Iced"], "required": true },
+        { "name": "Milk", "choices": ["Whole", "Oat", "Almond", "Soy"], "required": true }
+      ],
+      "allergens": ["milk"],
+      "available": true
+    },
+    {
+      "id": "matcha-latte",
+      "name": "Matcha Latte",
+      "category": "Tea & Cold Drinks",
+      "description": "Stone-ground matcha whisked by hand, served hot or over ice.",
+      "price": 5.25,
+      "sizes": [
+        { "name": "Regular", "price": 5.25 },
+        { "name": "Large", "price": 5.95 }
+      ],
+      "options": [
+        { "name": "Temperature", "choices": ["Hot", "Iced"], "required": true },
+        { "name": "Milk", "choices": ["Whole", "Oat", "Almond", "Soy"], "required": true }
+      ],
+      "allergens": ["milk"],
+      "available": true
+    },
+    {
+      "id": "hibiscus-iced-tea",
+      "name": "Hibiscus Iced Tea",
+      "category": "Tea & Cold Drinks",
+      "description": "Tart, deep red, lightly sweetened with orange blossom honey.",
+      "price": 3.75,
+      "sizes": [
+        { "name": "Regular", "price": 3.75 },
+        { "name": "Large", "price": 4.40 }
+      ],
+      "options": [],
+      "allergens": [],
+      "available": true
+    },
+    {
+      "id": "cardamom-bun",
+      "name": "Cardamom Bun",
+      "category": "Bakery",
+      "description": "Knotted, twice-proved and finished with crushed cardamom sugar. Out of the oven at 7am.",
+      "price": 4.25,
+      "sizes": [
+        { "name": "One", "price": 4.25 }
+      ],
+      "options": [
+        { "name": "Warmed", "choices": ["Yes", "No"], "required": false }
+      ],
+      "allergens": ["gluten", "milk", "egg"],
+      "available": true
+    },
+    {
+      "id": "butter-croissant",
+      "name": "Butter Croissant",
+      "category": "Bakery",
+      "description": "Three days of folding, twenty minutes of heat. Best before nine.",
+      "price": 3.50,
+      "sizes": [
+        { "name": "One", "price": 3.50 }
+      ],
+      "options": [
+        { "name": "Warmed", "choices": ["Yes", "No"], "required": false }
+      ],
+      "allergens": ["gluten", "milk"],
+      "available": true
+    },
+    {
+      "id": "banana-bread",
+      "name": "Banana Bread",
+      "category": "Bakery",
+      "description": "Thick slice, walnut top, warmed on request. Vegan.",
+      "price": 3.75,
+      "sizes": [
+        { "name": "Slice", "price": 3.75 }
+      ],
+      "options": [
+        { "name": "Warmed", "choices": ["Yes", "No"], "required": false }
+      ],
+      "allergens": ["gluten", "nuts"],
+      "available": true
+    },
+    {
+      "id": "almond-biscotti",
+      "name": "Almond Biscotti",
+      "category": "Bakery",
+      "description": "Twice-baked and stubbornly crisp - made for dunking.",
+      "price": 2.50,
+      "sizes": [
+        { "name": "One", "price": 2.50 }
+      ],
+      "options": [],
+      "allergens": ["gluten", "nuts", "egg"],
+      "available": true
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "currency": "USD",
+  "note": "Only promotions with \"active\": true may be applied. Anything else is expired or not yet running and must be treated as if it does not exist.",
+  "promotions": [
+    {
+      "id": "early-bird-pairing",
+      "name": "Early Bird Pairing",
+      "rule": "$1.00 off any bakery item when bought together with any coffee, weekday mornings before 9:00.",
+      "discount": { "type": "amount_off", "value": 1.00 },
+      "eligibility": {
+        "code": null,
+        "appliesToItems": [],
+        "appliesToCategories": ["Bakery"],
+        "alsoRequiresItemFrom": ["Coffee"],
+        "days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        "timeWindow": { "start": "07:00", "end": "09:00" },
+        "dateRange": { "start": "2026-03-02", "end": null },
+        "minimumSpend": null,
+        "limitPerCustomer": 1
+      },
+      "active": true
+    },
+    {
+      "id": "afternoon-lull",
+      "name": "Afternoon Lull",
+      "rule": "10% off the whole order between 14:00 and 16:00, Monday to Thursday, on orders of $10 or more.",
+      "discount": { "type": "percent_off", "value": 10 },
+      "eligibility": {
+        "code": null,
+        "appliesToItems": [],
+        "appliesToCategories": ["Coffee", "Tea & Cold Drinks", "Bakery"],
+        "alsoRequiresItemFrom": [],
+        "days": ["Monday", "Tuesday", "Wednesday", "Thursday"],
+        "timeWindow": { "start": "14:00", "end": "16:00" },
+        "dateRange": { "start": "2026-01-06", "end": null },
+        "minimumSpend": 10.00,
+        "limitPerCustomer": 1
+      },
+      "active": true
+    },
+    {
+      "id": "summer-cold-brew",
+      "name": "Summer Cold Brew",
+      "rule": "15% off Cold Brew with code SUMMERBREW. Summer 2025 only — this promotion has ended.",
+      "discount": { "type": "percent_off", "value": 15 },
+      "eligibility": {
+        "code": "SUMMERBREW",
+        "appliesToItems": ["cold-brew"],
+        "appliesToCategories": [],
+        "alsoRequiresItemFrom": [],
+        "days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+        "timeWindow": { "start": "07:00", "end": "21:00" },
+        "dateRange": { "start": "2025-06-01", "end": "2025-08-31" },
+        "minimumSpend": null,
+        "limitPerCustomer": 1
+      },
+      "active": false
+    }
+  ]
+}

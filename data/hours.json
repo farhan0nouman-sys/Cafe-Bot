@@ -1,0 +1,13 @@
+{
+  "timezone": "America/New_York",
+  "note": "The kitchen stops taking bakery orders thirty minutes before close.",
+  "hours": [
+    { "day": "Monday", "open": "07:00", "close": "19:00" },
+    { "day": "Tuesday", "open": "07:00", "close": "19:00" },
+    { "day": "Wednesday", "open": "07:00", "close": "19:00" },
+    { "day": "Thursday", "open": "07:00", "close": "19:00" },
+    { "day": "Friday", "open": "07:00", "close": "21:00" },
+    { "day": "Saturday", "open": "08:00", "close": "21:00" },
+    { "day": "Sunday", "open": "08:00", "close": "17:00" }
+  ]
+}

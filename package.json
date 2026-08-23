@@ -1,0 +1,17 @@
+{
+  "name": "cafebot",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Cafe web app: static frontend plus an Express backend for the CafeBot assistant.",
+  "type": "module",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js"
+  },
+  "license": "UNLICENSED",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.120.0",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1"
+  }
+}
