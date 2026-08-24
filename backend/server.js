@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import Anthropic from '@anthropic-ai/sdk';
 import dotenv from 'dotenv';
 import express from 'express';
+import { advanceStatus, readOrders } from './order-file.js';
 import { getOrder } from './orders.js';
 import { runTool, tools } from './tools.js';
 
@@ -13,7 +14,7 @@ dotenv.config({ path: path.join(rootDir, '.env') });
 
 const MODEL = 'claude-haiku-4-5-20251001';
 const MAX_TOKENS = 1024;
-const MAX_TOOL_STEPS = 4;
+const MAX_TOOL_STEPS = 10;
 const FALLBACK_REPLY =
   "Sorry — I'm having trouble thinking right now. Try again in a moment, or ask the team at the counter.";
 
@@ -77,16 +78,17 @@ app.post('/api/chat', async (req, res) => {
         messages,
       });
 
+      const text = response.content
+        .filter((block) => block.type === 'text')
+        .map((block) => block.text)
+        .join('\n')
+        .trim();
+
       const toolUses = response.content.filter((block) => block.type === 'tool_use');
 
-      if (toolUses.length === 0) {
-        reply = response.content
-          .filter((block) => block.type === 'text')
-          .map((block) => block.text)
-          .join('\n')
-          .trim();
-        break;
-      }
+      // Keep the latest text so a turn that runs out of steps still says something.
+      if (text) reply = text;
+      if (toolUses.length === 0) break;
 
       messages.push({ role: 'assistant', content: response.content });
       messages.push({
@@ -104,6 +106,22 @@ app.post('/api/chat', async (req, res) => {
     console.error('Claude request failed:', error);
     res.status(502).json({ reply: FALLBACK_REPLY, sessionId: order.id });
   }
+});
+
+app.get('/api/orders', (req, res) => {
+  res.json({ orders: readOrders().reverse() });
+});
+
+app.post('/api/orders/:orderId/status', (req, res) => {
+  const { status } = req.body ?? {};
+  const result = advanceStatus(req.params.orderId, status);
+
+  if (result.error) {
+    res.status(result.code).json({ error: result.error });
+    return;
+  }
+
+  res.json({ order: result.order });
 });
 
 app.listen(port, () => {

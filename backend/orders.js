@@ -15,10 +15,13 @@ function newOrder() {
     items: [],
     orderType: 'pickup',
     customer: { name: null, phone: null },
+    pickupTime: null,
+    delivery: { address: null, unit: null, instructions: null, addressConfirmed: false },
     discount: { id: null, name: null, amount: 0 },
     total: 0,
     confirmed: false,
     status: 'open',
+    summaryShown: null,
     updatedAt: Date.now(),
   };
 }

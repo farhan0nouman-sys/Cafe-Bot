@@ -1,0 +1,6 @@
+{
+  "currency": "USD",
+  "taxRate": 0,
+  "taxNote": "Menu prices already include tax, so the rate here is zero. Set it if that changes.",
+  "deliveryFee": 3.50
+}
