@@ -26,7 +26,9 @@ function itemList(items) {
 
   for (const item of items) {
     const li = document.createElement('li');
-    const options = Object.values(item.options).join(', ');
+    const options = Object.entries(item.options)
+      .map(([name, value]) => (name === 'Size' ? value : `${name}: ${value}`))
+      .join(', ');
     li.textContent = `${item.quantity} × ${item.name}${options ? ` (${options})` : ''}`;
     ul.append(li);
   }

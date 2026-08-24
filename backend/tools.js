@@ -105,7 +105,7 @@ export const tools = [
   {
     name: 'pickupDetails',
     description:
-      "Reads or records who the order is for and when they want it. Every order is collected at the counter. Call with no arguments first to see what is already known and what is still missing - ask the customer only for what the tool reports as missing, never for something it already has. A first name is needed before an order can be finalised; a pickup time is optional and means 'as soon as it is ready' when left out.",
+      "Reads or records who a pickup order is for and when they want it, collected at the counter. Calling it switches the order to pickup, so use it if a customer changes their mind about delivery. Call with no arguments first to see what is already known and what is still missing - ask the customer only for what the tool reports as missing, never for something it already has. A first name is needed before an order can be finalised; a pickup time is optional and means 'as soon as it is ready' when left out.",
     input_schema: {
       type: 'object',
       properties: {
@@ -306,6 +306,39 @@ function addItemToCart(input, order) {
       ok: false,
       error: `${item.name} with those options is already on the order at line ${duplicate + 1}, quantity ${existing.quantity}. Do not add it again. If the customer wants more, change the quantity on that line with modifyItem.`,
       line: { lineNumber: duplicate + 1, name: existing.name, quantity: existing.quantity, options: existing.options },
+    };
+  }
+
+  // Same item, same choices, plus an option the existing line never had a choice
+  // for: the customer is answering a question about the one already on the order,
+  // not asking for a second one. Adding it here would charge them twice.
+  const refining = order.items.findIndex(
+    (line) =>
+      line.itemId === item.id &&
+      Object.entries(line.options).every(([name, value]) => options[name] === value) &&
+      Object.keys(options).length > Object.keys(line.options).length,
+  );
+
+  // Apply it to that line rather than refusing: a refusal leaves the choice
+  // recorded nowhere while the reply says it was made.
+  if (refining !== -1) {
+    const existing = order.items[refining];
+    existing.options = options;
+    recalculate(order);
+    order.updatedAt = Date.now();
+
+    return {
+      ok: true,
+      changed: {
+        lineNumber: refining + 1,
+        name: existing.name,
+        quantity: existing.quantity,
+        options: existing.options,
+        unitPrice: existing.unitPrice,
+        lineTotal: existing.lineTotal,
+      },
+      note: `${item.name} was already on the order, so this set the choice on line ${refining + 1} instead of adding a second one. Quantity is still ${existing.quantity} - raise it with modifyItem if the customer wants more.`,
+      cart: { items: order.items, total: order.total },
     };
   }
 
@@ -520,6 +553,8 @@ function deliveryDetails(input, order) {
     order.customer.phone = phone;
   }
 
+  let addressChanged = false;
+
   for (const field of ['address', 'unit', 'instructions']) {
     if (input[field] === undefined) continue;
 
@@ -534,6 +569,7 @@ function deliveryDetails(input, order) {
     // Where the order is going has changed, so any earlier read-back is void.
     if (field !== 'instructions' && value !== order.delivery[field]) {
       order.delivery.addressConfirmed = false;
+      addressChanged = true;
     }
     order.delivery[field] = value;
   }
@@ -543,11 +579,21 @@ function deliveryDetails(input, order) {
   if (order.customer.phone === null) missing.push('phone');
   if (order.delivery.address === null) missing.push('address');
 
+  let warning;
+
   if (input.confirmAddress === true) {
     if (order.delivery.address === null) {
       return { ok: false, error: 'There is no address to confirm yet. Ask for it first.' };
     }
-    order.delivery.addressConfirmed = true;
+
+    // An address the customer has not heard back cannot have been agreed to, so a
+    // call that writes one and confirms it in the same breath confirms nothing.
+    if (addressChanged) {
+      warning =
+        'The address was recorded but not confirmed: it changed in this same call, so the customer cannot have heard it read back yet.';
+    } else {
+      order.delivery.addressConfirmed = true;
+    }
   }
 
   order.updatedAt = Date.now();
@@ -558,6 +604,7 @@ function deliveryDetails(input, order) {
 
   return {
     ok: true,
+    warning,
     orderType: order.orderType,
     name: order.customer.name,
     phone: order.customer.phone,
@@ -580,6 +627,10 @@ function deliveryDetails(input, order) {
 
 function pickupDetails(input, order) {
   const now = new Date();
+
+  // Mirrors deliveryDetails: asking about pickup is how an order becomes a pickup,
+  // including one that was heading out for delivery a moment ago.
+  order.orderType = 'pickup';
 
   if (input.name !== undefined) {
     const name = String(input.name).trim();

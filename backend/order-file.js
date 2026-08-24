@@ -1,5 +1,15 @@
 // Reads and writes data/orders.json. Dev-only storage: a whole-file rewrite per
 // change, which is fine for one café on one machine and nothing more.
+//
+// This is for development and demos, not production. On Vercel's serverless
+// functions the filesystem is ephemeral and not shared between invocations: a
+// write may vanish when the instance is recycled, and two instances running at
+// once will not see each other's orders. Deployed there, orders placed through
+// this module would be lost.
+//
+// The fix is a real database, and that is a V2 upgrade rather than a V1
+// requirement. Everything above the storage layer stays as it is - swapping
+// readOrders, appendOrder and advanceStatus for database calls is the whole job.
 
 import fs from 'node:fs';
 import path from 'node:path';

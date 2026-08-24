@@ -93,6 +93,9 @@ document.addEventListener('keydown', (event) => {
   }
 });
 
+// The order itself lives on the server; this id is how the next message finds it.
+let sessionId;
+
 async function askCafeBot(text) {
   const response = await fetch('/api/chat', {
     method: 'POST',
@@ -100,10 +103,13 @@ async function askCafeBot(text) {
     body: JSON.stringify({
       message: text,
       conversationHistory: history.slice(-HISTORY_TURNS),
+      sessionId,
     }),
   });
 
   const data = await response.json().catch(() => ({}));
+  if (typeof data.sessionId === 'string') sessionId = data.sessionId;
+
   return typeof data.reply === 'string' && data.reply ? data.reply : ERROR_REPLY;
 }
 
