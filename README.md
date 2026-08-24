@@ -21,6 +21,17 @@ the orders screen.
 `false`, the key is missing from `.env` and the assistant will fall back to an apology
 on every message.
 
+## Tests
+
+```
+npm test
+```
+
+`test/regression.mjs` drives the ordering tools directly — menu grounding, missing
+options, edits, delivery details and the address read-back, pricing, the confirmation
+gate and the staff status sequence. It needs no API key, no server and no network, and
+it puts `data/orders.json` back as it found it.
+
 ## Configuration
 
 | Variable | What it does |
@@ -44,6 +55,7 @@ CafeBot/
 ├── data/           menu.json, hours.json, promotions.json, config.json
 │                   orders.json   — dev-only storage, see below
 ├── prompts/        system-prompt.md
+├── test/           regression.mjs — offline checks over the ordering tools
 └── README.md
 ```
 
