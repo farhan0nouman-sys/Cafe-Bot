@@ -32,6 +32,22 @@ The staff side needs HTTP Basic Auth with the username `staff` and `STAFF_PASSWO
 `POST /api/orders/:orderId/status`. Basic Auth sends the password on every request,
 so serve this over HTTPS anywhere but localhost.
 
+## Limits on /api/chat
+
+A turn can cost up to ten model calls, so the endpoint is capped per IP address:
+
+| Limit | Value | What happens past it |
+| --- | --- | --- |
+| Requests per minute | 20 | `429` with `Retry-After` |
+| Requests per day | 200 | `429` |
+| Message length | 1500 characters | `400` |
+| History sent to the model | last 10 turns, 8000 characters | older turns dropped |
+| Request body | 32kb | `413` |
+
+The history the client sends is trimmed server-side before it reaches the model, so a
+long session cannot grow the bill. Deployed behind a proxy, set `TRUST_PROXY` or every
+customer shares one rate-limit bucket.
+
 ## Tests
 
 ```
@@ -50,6 +66,7 @@ it puts `data/orders.json` back as it found it.
 | `ANTHROPIC_API_KEY` | Required. The assistant cannot answer without it. |
 | `STAFF_PASSWORD` | Required to open the staff screen. Username is `staff`. |
 | `PORT` | Optional, defaults to 3000. |
+| `TRUST_PROXY` | Number of proxies in front of the app, e.g. `1` on Vercel. Leave unset for direct connections. |
 
 `.env` is gitignored and must stay that way — the key belongs there and nowhere else.
 `.env.example` is committed with empty values as the template.
