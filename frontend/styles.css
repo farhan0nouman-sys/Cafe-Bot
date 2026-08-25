@@ -1,5 +1,7 @@
 /* CafeBot — warm paper, ink and copper. An editorial cafe front.
-   Mobile-first. Breakpoints: 40rem (640px), 60rem (960px), 78rem (1248px).
+   Mobile-first. Breakpoints: 30rem (480px), 40rem (640px), 48rem (768px),
+   60rem (960px). Nothing here is wider than its container: no page-level
+   overflow-x, so a scrollbar means a real bug rather than a hidden one.
    Light and dark are both first-class; every colour comes from a token. */
 
 /* ============================================================
@@ -146,7 +148,10 @@ body {
   line-height: 1.65;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
+  /* A long unbroken word - a URL, an address - wraps rather than widening the page.
+     `anywhere` rather than `break-word`: only this one counts towards an element's
+     min-content width, which is what stops a flex or grid item forcing a scrollbar. */
+  overflow-wrap: anywhere;
 }
 
 /* A whisper of paper grain over the whole page. Cheap, inline, decorative. */
@@ -197,6 +202,7 @@ img,
 svg {
   display: block;
   max-width: 100%;
+  height: auto;
 }
 
 a {
@@ -309,6 +315,20 @@ a {
   align-items: center;
   gap: var(--space-5);
   min-height: var(--header-h);
+}
+
+/* Flex items refuse to shrink past their content unless told they may. */
+.brand,
+.site-nav,
+.header-action,
+.card-title,
+.card-price,
+.hours-row dt,
+.hours-row dd,
+.contact li,
+.cat-title span,
+.bubble {
+  min-width: 0;
 }
 
 .brand {
@@ -473,8 +493,8 @@ a {
   position: absolute;
   top: -14rem;
   right: -12rem;
-  width: 42rem;
-  height: 42rem;
+  width: min(42rem, 130vw);
+  height: min(42rem, 130vw);
   border: 1px solid var(--rule-strong);
   border-radius: 50%;
   box-shadow: inset 0 0 0 8rem transparent, 0 0 0 6rem var(--accent-wash);
