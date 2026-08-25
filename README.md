@@ -82,9 +82,11 @@ CafeBot/
 │                   orders.js     — in-memory order state, keyed by session
 │                   order-file.js — reads and writes data/orders.json
 ├── data/           menu.json, hours.json, promotions.json, config.json
-│                   orders.json   — dev-only storage, see below
+│                   orders.json   — dev-only storage, gitignored, see below
 ├── prompts/        system-prompt.md
 ├── test/           regression.mjs — offline checks over the ordering tools
+├── api/            index.js      — serverless entry point, exports the same app
+├── vercel.json     routes every path to that function
 └── README.md
 ```
 
@@ -92,12 +94,39 @@ Prices, totals and discounts are worked out on the server from `data/menu.json` 
 `data/promotions.json`. The assistant never calculates a price, and a price sent by the
 client is ignored.
 
+## Deploying to Vercel
+
+`api/index.js` is the entry point: Vercel treats a default export from `api/` as the
+request handler, and an Express app already is one. `vercel.json` rewrites every path
+to it, so the platform serves nothing directly — that is deliberate, because the staff
+password is enforced by Express middleware and static hosting would serve
+`staff.html` around it. `includeFiles` ships `data/`, `prompts/` and `frontend/` into
+the function, since those are read from disk at runtime and nothing imports them.
+
+`backend/server.js` only calls `listen` when it is run directly, so `npm start` still
+works locally while the platform owns the socket in production.
+
+Set these in **Project → Settings → Environment Variables**:
+
+| Variable | Value |
+| --- | --- |
+| `ANTHROPIC_API_KEY` | your key |
+| `STAFF_PASSWORD` | a password that is not the one in your local `.env` |
+| `TRUST_PROXY` | `1` — without it every customer shares one rate-limit bucket |
+
+Do not set `PORT`; Vercel assigns it.
+
+**Orders will not survive there, and placing one will fail.** The filesystem is
+read-only apart from `/tmp`, so the write in `backend/order-file.js` throws and the
+customer gets the fallback apology instead of an order number. The café side — menu,
+hours, prices, the whole conversation — works. Taking orders needs real storage
+first. See the note at the top of `backend/order-file.js`.
+
 ## Before deploying
 
-- **Orders are stored in a file.** `data/orders.json` is fine for local development and
-  demos. On serverless hosting such as Vercel the filesystem is ephemeral and not shared
-  between invocations, so orders written there can vanish. A real database is a V2
-  upgrade, not a V1 requirement — see the note at the top of `backend/order-file.js`.
+- **Orders are stored in a file.** Fine locally; on serverless the filesystem is
+  read-only and not shared between invocations, so orders cannot be written at all. A
+  real database is a V2 upgrade, not a V1 requirement.
 - **The staff login is one shared password, over Basic Auth.** There are no accounts,
   no sessions and no lockout, and the password travels on every request — so terminate
   TLS in front of it, and change `STAFF_PASSWORD` when someone leaves.

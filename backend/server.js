@@ -227,6 +227,12 @@ app.use((error, req, res, next) => {
   next(error);
 });
 
-app.listen(port, () => {
-  console.log(`CafeBot listening on http://localhost:${port}`);
-});
+// Run directly (npm start) and this listens. Imported - by api/index.js on a
+// serverless host, or by a test - it does not: the platform owns the socket there.
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  app.listen(port, () => {
+    console.log(`CafeBot listening on http://localhost:${port}`);
+  });
+}
+
+export default app;
