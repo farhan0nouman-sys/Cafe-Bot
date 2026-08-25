@@ -19,7 +19,18 @@ the orders screen.
 
 `npm start` prints `ANTHROPIC_API_KEY loaded: true` if the key was picked up. If it says
 `false`, the key is missing from `.env` and the assistant will fall back to an apology
-on every message.
+on every message. It prints `STAFF_PASSWORD loaded:` the same way — if that is `false`
+the staff screen answers 503 to everyone, which is the safe way to be misconfigured.
+
+## Who can reach what
+
+The café side is public: the site, and `POST /api/chat`, which is how a customer
+places an order.
+
+The staff side needs HTTP Basic Auth with the username `staff` and `STAFF_PASSWORD`:
+`/staff.html` and its script and stylesheet, `GET /api/orders`, and
+`POST /api/orders/:orderId/status`. Basic Auth sends the password on every request,
+so serve this over HTTPS anywhere but localhost.
 
 ## Tests
 
@@ -37,6 +48,7 @@ it puts `data/orders.json` back as it found it.
 | Variable | What it does |
 | --- | --- |
 | `ANTHROPIC_API_KEY` | Required. The assistant cannot answer without it. |
+| `STAFF_PASSWORD` | Required to open the staff screen. Username is `staff`. |
 | `PORT` | Optional, defaults to 3000. |
 
 `.env` is gitignored and must stay that way — the key belongs there and nowhere else.
@@ -69,11 +81,8 @@ client is ignored.
   demos. On serverless hosting such as Vercel the filesystem is ephemeral and not shared
   between invocations, so orders written there can vanish. A real database is a V2
   upgrade, not a V1 requirement — see the note at the top of `backend/order-file.js`.
-- **The staff screen has no authentication.** `/staff.html`, `GET /api/orders` and
-  `POST /api/orders/:id/status` are open to anyone who can reach the server, and orders
-  hold customer names, phone numbers and addresses.
-- **`data/orders.json` is tracked in git.** It is committed empty; keep it that way, or
-  untrack it before real orders go through:
-  `git rm --cached data/orders.json && echo "data/orders.json" >> .gitignore`
+- **The staff login is one shared password, over Basic Auth.** There are no accounts,
+  no sessions and no lockout, and the password travels on every request — so terminate
+  TLS in front of it, and change `STAFF_PASSWORD` when someone leaves.
 - **The delivery fee in `data/config.json` is a placeholder** ($3.50), as is the zero tax
   rate — menu prices are tax-inclusive today. Set both to whatever is real.

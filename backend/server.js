@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import Anthropic from '@anthropic-ai/sdk';
 import dotenv from 'dotenv';
 import express from 'express';
+import basicAuth from 'express-basic-auth';
 import { advanceStatus, readOrders } from './order-file.js';
 import { getOrder } from './orders.js';
 import { runTool, tools } from './tools.js';
@@ -28,6 +29,23 @@ ${read('data', 'hours.json').trim()}
 `;
 
 console.log('ANTHROPIC_API_KEY loaded:', Boolean(process.env.ANTHROPIC_API_KEY));
+console.log('STAFF_PASSWORD loaded:', Boolean(process.env.STAFF_PASSWORD));
+
+// Orders carry customer names, phone numbers and addresses, so everything that
+// reads or changes one sits behind this. With no password set the staff side is
+// closed rather than open: an unset variable must never mean "let everyone in".
+const staffOnly = process.env.STAFF_PASSWORD
+  ? basicAuth({
+      users: { staff: process.env.STAFF_PASSWORD },
+      challenge: true,
+      realm: 'CafeBot staff',
+      unauthorizedResponse: { error: 'Staff credentials required.' },
+    })
+  : (req, res) => {
+      res.status(503).json({
+        error: 'The staff area is closed: STAFF_PASSWORD is not set on the server.',
+      });
+    };
 
 const anthropic = new Anthropic();
 
@@ -35,6 +53,12 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
+
+// Before express.static, or the staff page would be served without ever reaching
+// the guard. /api/chat is deliberately not here: that is how customers order.
+app.use(['/staff.html', '/staff.js', '/staff.css'], staffOnly);
+app.use('/api/orders', staffOnly);
+
 app.use(express.static(path.join(rootDir, 'frontend')));
 
 function cleanHistory(history) {
