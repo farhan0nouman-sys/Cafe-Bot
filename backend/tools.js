@@ -1014,8 +1014,7 @@ function newOrderId(now, taken) {
 // Only ever called once an order has passed every confirmation check. Nothing
 // writes a draft here.
 function saveOrder(order) {
-  const file = path.join(rootDir, 'data', 'orders.json');
-  const saved = JSON.parse(fs.readFileSync(file, 'utf8'));
+  const saved = readOrders();
   const now = new Date();
 
   const record = {

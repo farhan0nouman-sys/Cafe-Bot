@@ -6,6 +6,9 @@ node_modules/
 .env.*
 !.env.example
 
+# Orders hold customer names, phone numbers and addresses. Local only.
+data/orders.json
+
 # Editors
 .vs/
 

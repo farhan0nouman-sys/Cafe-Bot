@@ -24,7 +24,12 @@ const file = path.join(
 
 export const STATUSES = ['NEW', 'PREPARING', 'READY', 'COMPLETED'];
 
+// The file is gitignored, since orders carry customer names, phone numbers and
+// addresses. A fresh clone therefore has no file at all: that is an empty
+// orderbook, not an error.
 export function readOrders() {
+  if (!fs.existsSync(file)) return [];
+
   return JSON.parse(fs.readFileSync(file, 'utf8'));
 }
 

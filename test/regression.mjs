@@ -15,7 +15,9 @@ import { runTool } from '../backend/tools.js';
 
 const rootDir = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const ordersFile = path.join(rootDir, 'data', 'orders.json');
-const ordersBefore = fs.readFileSync(ordersFile, 'utf8');
+// Gitignored, so a fresh clone has no file. Null means "there was none": the run
+// puts that back too, rather than leaving one behind.
+const ordersBefore = fs.existsSync(ordersFile) ? fs.readFileSync(ordersFile, 'utf8') : null;
 
 let pass = 0;
 const fails = [];
@@ -310,7 +312,8 @@ try {
     check('nonsense status refused', advanceStatus(id, 'CANCELLED').error !== undefined);
   }
 } finally {
-  fs.writeFileSync(ordersFile, ordersBefore);
+  if (ordersBefore === null) fs.rmSync(ordersFile, { force: true });
+  else fs.writeFileSync(ordersFile, ordersBefore);
 }
 
 console.log('\n==== ' + pass + ' passed, ' + fails.length + ' failed ====');
